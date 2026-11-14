@@ -1,0 +1,189 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "definitions": {
+    "Assumption": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "text_markdown": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "text_markdown"
+      ],
+      "type": "object"
+    },
+    "ClaimBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "claim": {
+          "$ref": "#/definitions/ClaimRef"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim",
+        "id"
+      ],
+      "type": "object"
+    },
+    "ClaimContent": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "items": {
+            "$ref": "#/definitions/Assumption"
+          },
+          "type": "array"
+        },
+        "interpretation_markdown": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "scope_markdown": {
+          "type": "string"
+        },
+        "statement_markdown": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "assumptions",
+        "interpretation_markdown",
+        "language",
+        "scope_markdown",
+        "statement_markdown"
+      ],
+      "type": "object"
+    },
+    "ClaimRef": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "owner_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "version_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "owner_document_id",
+        "version_id"
+      ],
+      "type": "object"
+    },
+    "ClaimVersion": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "$ref": "#/definitions/ClaimContent"
+        },
+        "reference": {
+          "$ref": "#/definitions/ClaimRef"
+        }
+      },
+      "required": [
+        "content",
+        "reference"
+      ],
+      "type": "object"
+    },
+    "Section": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/definitions/ClaimBlock"
+          },
+          "type": "array"
+        },
+        "id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "blocks",
+        "id",
+        "title"
+      ],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "claim_heads": {
+      "additionalProperties": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "claim_versions": {
+      "items": {
+        "$ref": "#/definitions/ClaimVersion"
+      },
+      "type": "array"
+    },
+    "document_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "format_version": {
+      "format": "uint32",
+      "minimum": 0.0,
+      "type": "integer"
+    },
+    "review_required": {
+      "description": "Changed old versions whose downstream uses need review.",
+      "items": {
+        "$ref": "#/definitions/ClaimRef"
+      },
+      "type": "array"
+    },
+    "revision_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/definitions/Section"
+      },
+      "type": "array"
+    },
+    "title": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "claim_heads",
+    "claim_versions",
+    "document_id",
+    "format_version",
+    "review_required",
+    "revision_id",
+    "sections",
+    "title"
+  ],
+  "title": "Snapshot",
+  "type": "object"
+}

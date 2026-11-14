@@ -1,0 +1,368 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": false,
+  "definitions": {
+    "Assumption": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "text_markdown": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "text_markdown"
+      ],
+      "type": "object"
+    },
+    "ClaimContent": {
+      "additionalProperties": false,
+      "properties": {
+        "assumptions": {
+          "items": {
+            "$ref": "#/definitions/Assumption"
+          },
+          "type": "array"
+        },
+        "interpretation_markdown": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string"
+        },
+        "scope_markdown": {
+          "type": "string"
+        },
+        "statement_markdown": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "assumptions",
+        "interpretation_markdown",
+        "language",
+        "scope_markdown",
+        "statement_markdown"
+      ],
+      "type": "object"
+    },
+    "ClaimRef": {
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "owner_document_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "version_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "owner_document_id",
+        "version_id"
+      ],
+      "type": "object"
+    },
+    "ClaimTarget": {
+      "description": "Explicit tags avoid ambiguous model-generated references.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "existing"
+              ],
+              "type": "string"
+            },
+            "reference": {
+              "$ref": "#/definitions/ClaimRef"
+            }
+          },
+          "required": [
+            "kind",
+            "reference"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "handle": {
+              "type": "string"
+            },
+            "kind": {
+              "enum": [
+                "local"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "handle",
+            "kind"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Operation": {
+      "description": "First supported vertical slice. Unsupported planned operations fail closed.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "enum": [
+                "rename_document"
+              ],
+              "type": "string"
+            },
+            "op_id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "op_id",
+            "title"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "new_handle": {
+              "type": "string"
+            },
+            "op": {
+              "enum": [
+                "add_section"
+              ],
+              "type": "string"
+            },
+            "op_id": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "new_handle",
+            "op",
+            "op_id",
+            "title"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/ClaimContent"
+            },
+            "new_handle": {
+              "type": "string"
+            },
+            "op": {
+              "enum": [
+                "create_claim"
+              ],
+              "type": "string"
+            },
+            "op_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "content",
+            "new_handle",
+            "op",
+            "op_id"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "claim": {
+              "$ref": "#/definitions/ClaimTarget"
+            },
+            "new_block_handle": {
+              "type": "string"
+            },
+            "op": {
+              "enum": [
+                "place_claim"
+              ],
+              "type": "string"
+            },
+            "op_id": {
+              "type": "string"
+            },
+            "section": {
+              "$ref": "#/definitions/SectionTarget"
+            }
+          },
+          "required": [
+            "claim",
+            "new_block_handle",
+            "op",
+            "op_id",
+            "section"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "claim_ref": {
+              "$ref": "#/definitions/ClaimRef"
+            },
+            "content": {
+              "$ref": "#/definitions/ClaimContent"
+            },
+            "new_version_handle": {
+              "type": "string"
+            },
+            "op": {
+              "enum": [
+                "revise_claim"
+              ],
+              "type": "string"
+            },
+            "op_id": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "claim_ref",
+            "content",
+            "new_version_handle",
+            "op",
+            "op_id",
+            "reason"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "block_id": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "expected_claim_ref": {
+              "$ref": "#/definitions/ClaimRef"
+            },
+            "op": {
+              "enum": [
+                "select_claim_version"
+              ],
+              "type": "string"
+            },
+            "op_id": {
+              "type": "string"
+            },
+            "replacement": {
+              "$ref": "#/definitions/ClaimTarget"
+            }
+          },
+          "required": [
+            "block_id",
+            "expected_claim_ref",
+            "op",
+            "op_id",
+            "replacement"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "SectionTarget": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "kind": {
+              "enum": [
+                "existing"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "kind"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "handle": {
+              "type": "string"
+            },
+            "kind": {
+              "enum": [
+                "local"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "handle",
+            "kind"
+          ],
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "properties": {
+    "explanation": {
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "$ref": "#/definitions/Operation"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "type": "array"
+    },
+    "protocol_version": {
+      "const": 1,
+      "format": "uint32",
+      "minimum": 0.0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "explanation",
+    "operations",
+    "protocol_version"
+  ],
+  "title": "Proposal",
+  "type": "object"
+}

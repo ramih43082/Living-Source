@@ -2,7 +2,7 @@
 
 ## Start here
 
-This is currently a planning repository, not a runnable Rust application. The hosted prototype is a separate design reference; its code and personal browser data have not been migrated here. Do not invent build commands or treat prototype behavior as verified local functionality.
+The repository now contains an in-memory Rust document engine and runnable CLI example. Start with [implementation setup](docs/IMPLEMENTATION.md) for tested commands and supported operations. SQLite persistence, browser UI and deep RAG are still outstanding. The hosted prototype is a separate design reference; its code and personal browser data have not been migrated here. Do not treat prototype behavior as verified local functionality.
 
 Read:
 1. [README](README.md) for purpose and current status.

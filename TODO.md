@@ -2,6 +2,14 @@
 
 Open work for the target local application. Prototype features are not evidence that these migration tasks are complete.
 
+## Implemented foundation
+
+- [x] Rust workspace, pinned toolchain and Cargo.lock.
+- [x] Six-operation in-memory document/claim engine with atomic batches and stale-version checks.
+- [x] Generated schemas, example fixture and CLI demo.
+- [x] Eleven core tests passing on development Linux; formatting and Clippy checks pass.
+- [x] Configure Linux/Windows CI (remote results must be checked separately).
+
 ## Local foundation
 
 - [ ] Select Rust server and cross-platform packaging dependencies.
@@ -10,7 +18,7 @@ Open work for the target local application. Prototype features are not evidence 
 - [ ] Preserve default Study and optional Critical review; no Exam practice mode or Study badge.
 - [x] Draft logical data model and document revision lifecycle (design only).
 - [x] Specify read-only document, typed schema and operation contract (design only).
-- [ ] Implement closed JSON Schemas/Rust types and common graph/chat validator.
+- [ ] Complete the full closed schema and common graph/chat validator (six-operation experimental subset implemented).
 - [ ] Select/document portable Markdown syntax and test round-trip graph reconstruction.
 - [ ] Implement read-only document pane; remove direct source-edit mutation routes.
 - [ ] Define bounded history retention, dependency protection and storage accounting.

@@ -2,7 +2,18 @@
 
 A local, AI-assisted learning workspace for any subject. Conversation drives the work; a read-only learning document updated through chat and graph actions and an inspectable knowledge graph develop alongside it.
 
-**Status:** planning repository. The hosted prototype is a design reference. The local Rust application and deep RAG system have not yet been implemented here.
+**Status:** first Rust document-core implementation with a runnable command-line demo and generated schemas. SQLite persistence, the local browser application and deep RAG are not implemented yet. The hosted prototype remains a separate design reference.
+
+## Run the first core
+
+Install Rust through rustup; the pinned toolchain is specified in rust-toolchain.toml.
+
+```sh
+cargo test --workspace --locked
+cargo run --locked -p living-source-core --example demo
+```
+
+See [implementation scope and developer setup](docs/IMPLEMENTATION.md). The demo is in-memory, needs no API key, and does not save a workspace. [Generated schemas](schemas/proposal.schema.json) describe the supported experimental subset; the broader specifications below remain the target.
 
 ## Planning documents
 

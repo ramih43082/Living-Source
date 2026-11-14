@@ -1,0 +1,14 @@
+{
+  "protocol_version": 1,
+  "explanation": "Add a claim about integer divisibility.",
+  "operations": [
+    {"op":"add_section","op_id":"section","new_handle":"new:section","title":"Divisibility"},
+    {"op":"create_claim","op_id":"claim","new_handle":"new:claim","content":{
+      "statement_markdown":"The integer n is divisible by 4.",
+      "language":"en","scope_markdown":"Integer arithmetic","assumptions":[],"interpretation_markdown":""
+    }},
+    {"op":"place_claim","op_id":"place","new_block_handle":"new:block",
+      "section":{"kind":"local","handle":"new:section"},
+      "claim":{"kind":"local","handle":"new:claim"}}
+  ]
+}
