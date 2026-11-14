@@ -1,95 +1,45 @@
-# Roadmap and TODO
+# Work register
 
-Open work for the target local application. Prototype features are not evidence that these migration tasks are complete.
+Current instruction: detailed handoff for incoming contributors; implementation may resume later. [FEATURE_STATUS](docs/FEATURE_STATUS.md) is the status authority and [DECISIONS](docs/DECISIONS.md) is the decision queue.
 
-## Implemented foundation
+## Documentation completed in this handoff
 
-- [x] Rust workspace, pinned toolchain and Cargo.lock.
-- [x] Six-operation in-memory document/claim engine with atomic batches and stale-version checks.
-- [x] Generated schemas, example fixture and CLI demo.
-- [x] Nineteen core/storage tests passing on development Linux; formatting and Clippy checks pass.
-- [x] SQLite initial migration, atomic commits, historical loads and durable operation receipts.
-- [x] Restart, concurrent stale-write, interrupted transaction, late write failure and SQLite-full tests.
-- [x] Configure Linux/Windows CI (remote results must be checked separately).
+- [x] Register viewer-first scope and JSON-only document format.
+- [x] Document detailed feature behavior, examples, boundaries and optional ideas.
+- [x] Separate accepted decisions from recommendations and unanswered choices.
+- [x] Link feature status to code/tests and identify prototype-only behavior.
+- [x] Preserve superseded technical drafts as historical references.
+- [x] Provide a contributor reading order and proposed continuation sequence.
 
-## Local foundation
+## Existing implementation
 
-- [ ] Select Rust server and cross-platform packaging dependencies.
-- [ ] Serve the TypeScript interface on loopback only.
-- [ ] Preserve three-pane layout, resize controls and dark mode.
-- [ ] Preserve default Study and optional Critical review; no Exam practice mode or Study badge.
-- [x] Draft logical data model and document revision lifecycle (design only).
-- [x] Specify read-only document, typed schema and operation contract (design only).
-- [ ] Complete the full closed schema and common graph/chat validator (six-operation experimental subset implemented).
-- [ ] Select/document portable Markdown syntax and test round-trip graph reconstruction.
-- [ ] Implement read-only document pane; remove direct source-edit mutation routes.
-- [ ] Define bounded history retention, dependency protection and storage accounting.
-- [ ] Review the data/revision proposals and translate them into SQL constraints and migrations.
-- [ ] Define workspace schema, migrations and relative-path rules.
-- [ ] Complete Markdown publication and workspace revision lifecycle (SQLite document/claim persistence implemented).
-- [ ] Implement idempotent expected-head saves, durable publication jobs and external-edit reconciliation.
-- [ ] Validate anchor mapping and immutable citation targets against the revision acceptance cases.
-- [ ] Import prototype workspace JSON without losing content.
-- [ ] Implement consistent backup/restore and test Linux-to-Windows migration.
+- [x] Rust workspace, pinned toolchain, Cargo.lock and CLI examples.
+- [x] Six-operation core with strict payload parsing, stable IDs, atomic batches and version checks.
+- [x] Generated schemas for the experimental subset.
+- [x] SQLite initial schema, document/claim history and durable operation retry records.
+- [x] Recorded 19 local tests passing; fmt/Clippy passed during implementation.
+- [x] Linux/Windows CI configured; remote/packaging outcomes not confirmed.
 
-## AI and credentials
+## First-viewer work, only when coding resumes
 
-- [ ] Move DeepSeek requests into a Rust provider adapter.
-- [ ] Recheck current deepseek-flash availability and record returned model metadata.
-- [ ] Integrate OS credential stores, including unavailable/locked Linux service handling.
-- [ ] Add explicit session-only fallback, key replacement and deletion.
-- [ ] Preserve usage reporting, cancellation, validated output and actionable errors.
-- [ ] Preserve concurrent chat/graph changes with version checks.
-- [ ] Test real learning sessions with credentials supplied through the app.
+- [ ] Resolve JSON loading workflow, initial layout and representative fixtures.
+- [ ] Finalize Section/Explanation/Claim/Reasoning schema and versioning.
+- [ ] Implement safe read-only rendering, math, citations and navigation.
+- [ ] Validate malformed inputs, Unicode/RTL, long content and accessibility.
+- [ ] Connect SQLite if required by the chosen viewer workflow.
+- [ ] Agree acceptance/release criteria with Rami.
 
-## Security audit — not performed
+## Later product work
 
-- [ ] Audit key handling in memory, logs, errors, exports and crash reports.
-- [ ] Audit loopback binding, Origin/Host validation, sessions, CSRF and DNS rebinding.
-- [ ] Audit filesystem/import access, path traversal and resource limits.
-- [ ] Audit Markdown/math rendering, XSS and untrusted source instructions.
-- [ ] Audit provider destinations, cancellation and rate limits.
-- [ ] Review dependencies and release/update provenance.
-- [ ] Document findings, fix issues and independently verify remediation before claiming security auditing is complete.
+- [ ] Full typed graph/chat operations, review diffs and service authorization.
+- [ ] Local server/session protections and platform packaging.
+- [ ] DeepSeek adapter, conversation storage, usage/cancellation/model provenance.
+- [ ] Credential store, key lifecycle and security audit.
+- [ ] Source ingestion, exact evidence/citations and hybrid local RAG.
+- [ ] Curation, contextual assessments, challenges and dependency review.
+- [ ] Scenario evaluation, traces, conflict containment and comparison.
+- [ ] Bounded history, safe cleanup, consistent backup/restore and OS migration.
+- [ ] JSON import/export with dependency preservation.
+- [ ] Optional learning aids, formal checking, OCR, publication export and external API/MCP.
 
-## Retrieval
-
-- [ ] Import Markdown, text and text-based PDFs with source metadata.
-- [ ] Add passage/context viewing and resolvable citations.
-- [ ] Implement lexical search and per-document source selection.
-- [ ] Establish a representative retrieval evaluation set.
-- [ ] Select local embeddings based on hardware and language tests.
-- [ ] Add hybrid ranking, deduplication and bounded expansion.
-- [ ] Add graph-assisted retrieval without making graph extraction mandatory.
-- [ ] Preserve lineage and prevent summary self-corroboration.
-
-## Knowledge and reasoning
-
-- [ ] Stable anchors and version-specific assessments.
-- [ ] Separate provenance, curation, assessment and hypothetical acceptance.
-- [ ] Reviewable AI relationships and explicit multi-premise inference.
-- [ ] Corrections, counterexamples and proof-gap distinctions.
-- [ ] Versioned scenarios with traces, pinned inputs, explicit refresh and conflict containment.
-- [ ] Conditional-result preservation, cycle handling and explicit rules for negation/contraposition.
-- [ ] Scenario comparison, disagreement tracing and dependency impact review.
-- [ ] Hide assessments during Study without changing stored values.
-
-## Validation
-
-- [ ] Browser checks for resizing, editing, citations, themes and keyboard access.
-- [ ] Persistence, disk-full, interrupted-write and recovery tests.
-- [ ] Mathematical, interpretive and language-learning workflows.
-- [ ] English presentation with multilingual/right-to-left source material.
-- [ ] Accessible textual equivalents for graph colors.
-- [ ] Distinguish unit checks, browser testing, live-provider testing and security audit.
-
-## Later
-
-- [ ] Optional MCP/API access for Codex or Claude Code.
-- [ ] OCR and advanced equation/PDF extraction.
-- [ ] Formal proof-assistant integration.
-- [ ] Richer learning progress, open questions, checkpoints and review scheduling.
-- [ ] Definition/terminology views and a focused claim/counterexample workspace.
-- [ ] Publication-oriented LaTeX/PDF export.
-
-Cloud synchronization is not required. Portable local backups are required.
+No current task requires MyST, Logseq integration, custom Markdown file syntax, direct document editing, a separate exam mode or cloud synchronization.

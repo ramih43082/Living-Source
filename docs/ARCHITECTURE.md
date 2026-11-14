@@ -1,88 +1,30 @@
-# Local architecture
+# Current architecture direction
 
-## Target
+The accepted product is described in [FEATURES](FEATURES.md), and actual implementation in [FEATURE_STATUS](FEATURE_STATUS.md).
 
-Single-user local website accessed through a browser on Linux or Windows 11. A Rust executable serves the interface and API on loopback only. Reuse the TypeScript interface; it need not be rewritten in Rust.
+## Boundaries
 
-Cloud storage and synchronization are not required. DeepSeek is the initial external inference service. Embedding-model installation may require a download; indexing should operate locally thereafter.
+- Local single-user browser application, intended for Linux and Windows 11.
+- Rust backend; reusable TypeScript frontend is the existing technical direction.
+- JSON document model with Markdown/LaTeX content fields.
+- One SQLite workspace database for durable state/history; imported assets and derived indexes can live alongside it.
+- Read-only document viewer, with future chat/graph operations using the same validated backend.
+- Future local retrieval plus external AI generation; local storage does not mean offline inference.
 
-The [data model](DATA_MODEL.md) and [revision lifecycle](DOCUMENT_REVISIONS.md) refine this architecture as proposed designs. They are not implemented migrations.
+The first milestone is the viewer. The full chat-left/document-and-graph-right arrangement remains the later workspace target.
 
-## Components
+## Authority and flow
 
-| Component | Responsibility |
-| --- | --- |
-| Browser UI | Chat, read-only Markdown/math document, graph editing controls, evidence and review views, themes |
-| Rust service | Workspace operations, ingestion, context assembly, retrieval, provider calls |
-| Local persistence | Markdown files, original references, SQLite records and revision snapshots |
-| Search | Full-text and vector retrieval, ranking, deduplication, graph expansion |
-| Scenario engine | Explicit multi-premise rules, signed derivations, conflict containment |
-| Credential adapter | OS secret-store access; stored keys are never returned to frontend code |
-| Provider adapter | DeepSeek requests, validation, errors, timeouts, usage and model metadata |
+Trusted application command context + proposed operations → schema/reference/version/authorization checks → atomic durable state → read-only rendering.
 
-Select exact frameworks and dependencies after portability, license and runtime checks.
+JSON describes document structure; SQLite persists it. A portable export must be versioned and validated on import. No independently writable Markdown mirror or MyST parser is currently required.
 
-## Proposed workspace layout
+## Existing versus future
 
-- `workspace.json`: workspace identity and schema version; no secrets.
-- `documents/`: generated portable Markdown representations of committed documents.
-- `references/`: imported originals.
-- `database.sqlite`: authoritative typed document/object versions and retained checkpoints, conversations, stable IDs, claims, relations, assessments and jobs.
-- Revision snapshots are initially kept in SQLite; a separate revisions directory is not required.
-- `indexes/`: rebuildable search data.
-- `exports/`: user-requested exports.
+Existing: core operations, immutable claim versions, SQLite initial schema, transactional saves, historical reads, durable retry receipts and tests.
 
-Use relative paths and stable IDs. Document/reference revisions are user data; search indexes are derived.
+Future: local server/session boundary, viewer, complete content types, safe rendering, graph actions, AI adapter, OS credential store, source ingestion, retrieval, assessment/scenario engines, backup/retention, packaging and updates.
 
-Proposed consistency strategy: validate typed operations and commit structured versions, metadata, head pointers and publication jobs in one SQLite transaction. Publish ordinary Markdown copies afterward through retryable jobs. Distinguish committed content from pending file publication. A database transaction alone does not atomically update a separate Markdown file. External changes are preserved as candidates and reconciled; see the revision lifecycle for limits of concurrent external-editor writes.
+Exact frameworks, local authentication, import limits, asset layout and backup implementation must be evaluated rather than guessed. Do not claim localhost alone is secure or that copying a live database is a consistent backup.
 
-Treat external Markdown edits as untrusted import candidates, converted to validated proposals for chat/graph review. Never adopt metadata or verification automatically. See [document schema](DOCUMENT_SCHEMA.md) and [operation contract](EDIT_OPERATIONS.md).
-
-## Minimum entities
-
-Workspace/schema migration; learning document/version; stable block anchor; reference/edition/translation/version; extracted passage/locator/quality; conversation/message; claim/version/curation; assessment; typed relationship; multi-premise rule; challenge; scenario/version/trace; retrieval run/evidence bundle; ingestion/index job.
-
-Authorship, curation, assessment and hypothetical acceptance are independent.
-
-## API responsibilities
-
-Closed typed operations for documents with expected-version checks and backend-generated serialization; discussion; AI proposals; manual promotion/assessment; reference import and source scope; search and citation inspection; scenario evaluation; workspace backup/restore; credential set/check/remove.
-
-A future MCP adapter can expose compatible operations to Codex or Claude Code without bypassing manual curation. This is optional.
-
-## Security boundaries — audit pending
-
-Localhost alone is not authentication. Audit:
-- Loopback binding and unexpected LAN exposure.
-- Origin/Host validation, DNS rebinding, CSRF and local sessions.
-- Authorization for state-changing operations.
-- File path traversal, arbitrary file access and unsafe imports.
-- Markdown/math rendering and XSS.
-- Source/agent prompt injection.
-- Secrets in memory, logs, errors, exports and crash reports.
-- Provider destinations, request sizes, resource limits and cancellation.
-- Dependency and update provenance.
-
-Use an OS credential-store adapter. If a Linux secret service is missing or locked, report it clearly and offer explicit session-only handling rather than silently storing plaintext. Support replacement and deletion.
-
-Never commit or include credentials in workspace backups or exported documents.
-
-## Portability and backups
-
-Build separate Linux and Windows 11 executables serving the same interface. Backups must combine a consistent SQLite snapshot with corresponding file revisions, preserving IDs, paths and citation/assessment links.
-
-Do not recommend copying a live SQLite database without handling WAL and consistency. Restore tests must include cross-OS migration and missing reference files.
-
-Changing OS means installing the appropriate executable, restoring the workspace and entering the API key again. Credential-store contents are excluded from backups.
-
-## Migration sequence
-
-1. Preserve accepted interface behavior.
-2. Replace hosted API routes with Rust loopback endpoints.
-3. Replace browser persistence with workspace operations.
-4. Import prototype JSON while preserving unsupported legacy fields.
-5. Add OS credential storage and local-session protections.
-6. Add retrieval and references incrementally.
-7. Test backup/restore and offline reading and graph-form editing on both OSs.
-
-Moving this plan to GitHub does not automatically migrate prototype code or personal browser data.
+See [STORAGE](STORAGE.md) for the actual storage profile and [the historical architecture](archive/ARCHITECTURE-pre-json.md) only for prior rationale.

@@ -56,13 +56,11 @@ Command is constructed by trusted application code and is intentionally not dese
 
 Proposal parsing and candidate validation do not render HTML. Prose resembling metadata stays literal content. A renderer must still sanitize HTML/links/math; no XSS protection or security audit is claimed by these tests.
 
-## Next slice
+## Current continuation priority
 
-1. History/receipt retention, safe workspace backup/restore and publication jobs.
-2. Expand the operation profile and add compatible TypeScript types before building graph forms.
-3. Choose and implement the portable Markdown grammar, deterministic serializer and round-trip tests.
-4. Add the loopback service and read-only document/graph interface.
-5. Connect DeepSeek through the same validation/authorization path; add credential handling separately.
+The owner has paused implementation in favor of a detailed contributor handoff. Read [HANDOFF](HANDOFF.md), [FEATURES](FEATURES.md) and [DECISIONS](DECISIONS.md).
+
+When coding resumes, the first usable milestone is the read-only JSON viewer with Section, Explanation, Claim and Reasoning. The implemented snapshot/proposal schemas are an experimental subset. Markdown/MyST serialization is no longer the next task; Markdown/LaTeX remain content within JSON fields.
 
 Store now persists history and replay receipts. Claim text is not copied into each document checkpoint, but manifests and accepted proposal records still grow. Automatic pruning, backup/restore, encryption and publication are not implemented; do not claim bounded long-term storage yet.
 

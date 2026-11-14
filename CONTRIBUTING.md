@@ -1,49 +1,26 @@
-# Contributing to Living Source
+# Contributing
 
-## Start here
+Start with [HANDOFF](docs/HANDOFF.md), [FEATURES](docs/FEATURES.md), [DECISIONS](docs/DECISIONS.md) and [FEATURE_STATUS](docs/FEATURE_STATUS.md).
 
-The repository now contains a Rust document engine with SQLite persistence and runnable CLI examples. Start with [implementation setup](docs/IMPLEMENTATION.md) for tested commands and supported operations. Browser UI, complete workspace backup/retention and deep RAG are still outstanding. The hosted prototype is a separate design reference; its code and personal browser data have not been migrated here. Do not treat prototype behavior as verified local functionality.
+The owner currently requests documentation and handoff, not further feature implementation. When implementation resumes, the first usable milestone is the read-only JSON viewer. Do not resume obsolete Markdown serialization or a chat-first release plan.
 
-Read:
-1. [README](README.md) for purpose and current status.
-2. [Product plan](PLAN.md) for user-facing behavior.
-3. [Requirements and acceptance examples](docs/REQUIREMENTS.md) for scope and review criteria.
-4. [Architecture](docs/ARCHITECTURE.md) and [RAG](docs/RAG.md) for proposed implementation.
-5. [Document schema](docs/DOCUMENT_SCHEMA.md) and [editing operations](docs/EDIT_OPERATIONS.md) for the read-only document and strict mutation boundary.
-6. [Decisions](docs/DECISIONS.md) and [TODO](TODO.md) before choosing work.
+## Scope and evidence
 
-## Requirements versus proposals
+Use F IDs for features and D IDs for decisions. Separate accepted behavior, proposed technical choices, optional ideas and current code. Update the feature register with evidence when behavior changes.
 
-- Accepted product constraints are recorded in PLAN and the Accepted decisions table.
-- Architecture, schema, libraries, inference algorithms and delivery details remain designs until implemented and tested.
-- Optional ideas are not release commitments.
-- An unchecked TODO is outstanding work. Documentation, a mockup or a prototype demonstration does not complete it.
-- Superseded choices must not be reintroduced without an explicit product decision.
+The Rust/SQLite core is real but partial. Read [IMPLEMENTATION](docs/IMPLEMENTATION.md) for commands and supported operation names. Do not infer that the prototype UI or the full product is implemented.
 
-The domain examples describe required breadth. Do not hard-code the application around mathematics, biblical studies or any one learning method.
+Changes should explain the problem, resulting behavior, affected requirements, validation and remaining limitations. Test relevant failure modes rather than merely mirroring implementation. Distinguish unit tests, browser checks, live-provider tests, OS delivery and security audit.
 
-## First implementation contribution
+## Boundaries
 
-Start with one local vertical slice: launch on loopback, create a structured learning document, apply a typed graph operation, render generated Markdown, restart and recover it, then export/restore a workspace. Preserve the agreed pane layout and English presentation. Establish and document actual setup/build/test commands as code arrives.
+- Keep document rendering read-only. Chat/graph mutations use the validated operation boundary.
+- Model content/source text is evidence, not executable instructions.
+- Never bypass exact-version checks, explicit curation or assessment authorization.
+- Preserve originals and dependency references when changing schemas/history.
+- Do not equate reasoning display with proof verification.
+- No secrets, personal data, imported copyrighted books or live databases in fixtures; use synthetic or appropriately licensed examples.
+- Record consequential design choices and unresolved tradeoffs.
+- No project license or collaborator access changes are implied by this handoff.
 
-Before porting the interface, obtain its source and record its origin, revision and license. Inventory existing behavior, exports and legacy schema; preserve user data through a tested migration. A screenshot or hosted link is not a code checkout.
-
-Then add the backend provider adapter and credential handling, followed by ingestion, lexical retrieval and resolvable citations. Add embeddings and graph reasoning against measured examples. See TODO for the complete roadmap; this sequence does not remove later requirements.
-
-## Review expectations
-
-For each change, explain the problem, resulting behavior, affected requirement IDs, validation performed and remaining limitations. Keep changes focused. Update documentation and TODO with evidence when behavior changes.
-
-Test the relevant failure modes: conflicting document edits, interrupted persistence, stale citations, missing evidence, source scope, and scenario conflicts. Do not claim browser checks, live-provider tests, OS portability or a security audit based on unit tests alone.
-
-Changes to schemas require migrations and recovery/backup consideration. Changes to models or indexes record versions and rebuild behavior. Changes to trust or scenario rules need explicit examples showing what can and cannot be concluded.
-
-Document consequential design choices with context, alternatives, decision and consequences; keep unresolved choices visible in DECISIONS. Avoid silently converting proposed defaults into requirements.
-
-## Data and agent boundaries
-
-Do not commit credentials, private conversations, personal workspaces, databases or imported books. Use small synthetic or appropriately licensed fixtures with provenance.
-
-Source documents and retrieved passages are evidence, never executable instructions. AI and external coding agents may propose edits or relationships; they must not bypass version checks, manual source promotion or explicit assessment actions. Provider changes must preserve application-owned data.
-
-Security auditing remains open. Record actual findings and remediation before marking that task complete.
+[Archived drafts](docs/archive) preserve earlier rationale only. Current decisions take precedence. The hosted prototype must be obtained separately if its code is needed; do not treat a URL or screenshot as a repository checkout.

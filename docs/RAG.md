@@ -1,6 +1,6 @@
 # RAG implementation plan
 
-Status: proposed; not yet implemented. Retrieval runs locally; DeepSeek receives selected evidence needed for a request.
+Status: proposed; not yet implemented. This is later work after the JSON document viewer, not a first-release dependency. Retrieval runs locally; DeepSeek receives selected evidence needed for a request.
 
 ## Sources and lineage
 
@@ -10,7 +10,7 @@ Retain source lineage. Set explicit source scope per learning document; cross-do
 
 ## Ingestion
 
-Initial formats: Markdown, UTF-8 text, text-based PDF. Provide an evidence viewer for citations without making a PDF reader the primary interface.
+Authored documents use the JSON schema. Initial external reference formats proposed: Markdown, UTF-8 text, text-based PDF. Provide an evidence viewer for citations without making a PDF reader the primary interface.
 
 1. Import the original and compute its hash.
 2. Capture title, author, language, edition, translator and locations.
