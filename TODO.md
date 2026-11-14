@@ -9,6 +9,11 @@ Open work for the target local application. Prototype features are not evidence 
 - [ ] Preserve three-pane layout, resize controls and dark mode.
 - [ ] Preserve default Study and optional Critical review; no Exam practice mode or Study badge.
 - [x] Draft logical data model and document revision lifecycle (design only).
+- [x] Specify read-only document, typed schema and operation contract (design only).
+- [ ] Implement closed JSON Schemas/Rust types and common graph/chat validator.
+- [ ] Select/document portable Markdown syntax and test round-trip graph reconstruction.
+- [ ] Implement read-only document pane; remove direct source-edit mutation routes.
+- [ ] Define bounded history retention, dependency protection and storage accounting.
 - [ ] Review the data/revision proposals and translate them into SQL constraints and migrations.
 - [ ] Define workspace schema, migrations and relative-path rules.
 - [ ] Implement crash-safe Markdown + SQLite persistence and revision history.
@@ -24,7 +29,7 @@ Open work for the target local application. Prototype features are not evidence 
 - [ ] Integrate OS credential stores, including unavailable/locked Linux service handling.
 - [ ] Add explicit session-only fallback, key replacement and deletion.
 - [ ] Preserve usage reporting, cancellation, validated output and actionable errors.
-- [ ] Preserve concurrent learner edits with version checks.
+- [ ] Preserve concurrent chat/graph changes with version checks.
 - [ ] Test real learning sessions with credentials supplied through the app.
 
 ## Security audit — not performed

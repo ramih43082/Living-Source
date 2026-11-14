@@ -12,7 +12,7 @@ The [data model](DATA_MODEL.md) and [revision lifecycle](DOCUMENT_REVISIONS.md) 
 
 | Component | Responsibility |
 | --- | --- |
-| Browser UI | Chat, Markdown/math editor, graph, evidence and review views, themes |
+| Browser UI | Chat, read-only Markdown/math document, graph editing controls, evidence and review views, themes |
 | Rust service | Workspace operations, ingestion, context assembly, retrieval, provider calls |
 | Local persistence | Markdown files, original references, SQLite records and revision snapshots |
 | Search | Full-text and vector retrieval, ranking, deduplication, graph expansion |
@@ -25,18 +25,18 @@ Select exact frameworks and dependencies after portability, license and runtime 
 ## Proposed workspace layout
 
 - `workspace.json`: workspace identity and schema version; no secrets.
-- `documents/`: portable Markdown working copies of committed documents.
+- `documents/`: generated portable Markdown representations of committed documents.
 - `references/`: imported originals.
-- `database.sqlite`: authoritative committed Markdown snapshots, conversations, stable IDs, claims, relations, assessments and jobs.
+- `database.sqlite`: authoritative typed document/object versions and retained checkpoints, conversations, stable IDs, claims, relations, assessments and jobs.
 - Revision snapshots are initially kept in SQLite; a separate revisions directory is not required.
 - `indexes/`: rebuildable search data.
 - `exports/`: user-requested exports.
 
 Use relative paths and stable IDs. Document/reference revisions are user data; search indexes are derived.
 
-Proposed consistency strategy: commit Markdown snapshots, metadata, head pointers and publication jobs in one SQLite transaction. Publish ordinary Markdown copies afterward through retryable jobs. Distinguish committed content from pending file publication. A database transaction alone does not atomically update a separate Markdown file. External changes are preserved as candidates and reconciled; see the revision lifecycle for limits of concurrent external-editor writes.
+Proposed consistency strategy: validate typed operations and commit structured versions, metadata, head pointers and publication jobs in one SQLite transaction. Publish ordinary Markdown copies afterward through retryable jobs. Distinguish committed content from pending file publication. A database transaction alone does not atomically update a separate Markdown file. External changes are preserved as candidates and reconciled; see the revision lifecycle for limits of concurrent external-editor writes.
 
-Detect external Markdown edits and reconcile them without losing anchors or overwriting pending AI work.
+Treat external Markdown edits as untrusted import candidates, converted to validated proposals for chat/graph review. Never adopt metadata or verification automatically. See [document schema](DOCUMENT_SCHEMA.md) and [operation contract](EDIT_OPERATIONS.md).
 
 ## Minimum entities
 
@@ -46,7 +46,7 @@ Authorship, curation, assessment and hypothetical acceptance are independent.
 
 ## API responsibilities
 
-Typed operations for documents with expected-version checks; discussion; AI proposals; manual promotion/assessment; reference import and source scope; search and citation inspection; scenario evaluation; workspace backup/restore; credential set/check/remove.
+Closed typed operations for documents with expected-version checks and backend-generated serialization; discussion; AI proposals; manual promotion/assessment; reference import and source scope; search and citation inspection; scenario evaluation; workspace backup/restore; credential set/check/remove.
 
 A future MCP adapter can expose compatible operations to Codex or Claude Code without bypassing manual curation. This is optional.
 
@@ -83,6 +83,6 @@ Changing OS means installing the appropriate executable, restoring the workspace
 4. Import prototype JSON while preserving unsupported legacy fields.
 5. Add OS credential storage and local-session protections.
 6. Add retrieval and references incrementally.
-7. Test backup/restore and offline document editing on both OSs.
+7. Test backup/restore and offline reading and graph-form editing on both OSs.
 
 Moving this plan to GitHub does not automatically migrate prototype code or personal browser data.

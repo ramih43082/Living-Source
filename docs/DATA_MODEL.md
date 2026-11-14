@@ -1,6 +1,6 @@
 # Data model — design draft
 
-Status: proposed implementation design, 14 November 2026. Not an implemented database or a finalized SQL migration. This refines the product requirements without changing them. Read with [document revisions](DOCUMENT_REVISIONS.md).
+Status: proposed implementation design, 14 November 2026. Not an implemented database or a finalized SQL migration. This refines the product requirements without changing them. Read with [document revisions](DOCUMENT_REVISIONS.md), [document schema](DOCUMENT_SCHEMA.md) and [operation contract](EDIT_OPERATIONS.md). These newer contracts supersede the earlier freeform editing/Markdown snapshot design.
 
 ## Core choice: identity is different from version
 
@@ -19,18 +19,20 @@ The following are logical records and key fields, not literal SQL. Each version 
 | workspace | ID, schema version, creation time. Database metadata is authoritative; workspace.json is a discoverable manifest. |
 | actor | ID, kind, display name. AI provenance points to a run; no credentials. |
 | document | ID, current revision ID, archive time. Current title is read from its revision. |
-| document_revision | ID, document ID, parent revision ID, title, complete Markdown, content hash, actor, origin, operation ID, restored-from revision if applicable. Immutable snapshots. |
+| document_revision | ID, document ID, parent revision ID, title, immutable structured manifest referencing block/knowledge versions, serializer version, content hash, actor, origin, operation ID, restored-from revision if applicable. Immutable snapshots. |
 | block | ID, document ID. Stable structural identity, never a truth assessment. |
-| block_occurrence | Revision ID + block ID, ordinal, kind, UTF-8 byte start/end, text hash. At most one occurrence of a block per revision; offsets address that exact snapshot. |
+| block_occurrence | Revision ID + block ID/version, parent section, ordinal, kind, generated UTF-8 byte start/end, text hash. At most one occurrence of a block per revision; offsets address that exact snapshot. |
 | anchor_mapping | Old/new occurrences, mapping kind (same, changed, split, merged), reviewer/method. Ambiguous mappings remain unresolved. |
 | conversation | ID, owning document ID, title, archive time. Multiple threads per document are allowed. |
 | message | ID, conversation ID, sequence, role, content, status, reply/replacement ID, optional AI run ID. Final messages are immutable; edits create replacements. |
-| edit_proposal | ID, document ID, base revision, candidate Markdown/hash, AI run/message, lifecycle state, applied revision if any. Candidate content is immutable; a revised candidate is a new proposal. |
-| draft | ID, document ID, base revision, editor session, buffer, update sequence. Recoverable working state, never cited as committed evidence. |
+| edit_proposal | ID, document ID, base revision, typed operation batch/hash and trusted expected-version context, AI run/message, lifecycle state, applied revision if any. Candidate content is immutable; a revised candidate is a new proposal. |
+| draft | ID, document ID, base revision, chat/graph session, recoverable form/proposal buffer, update sequence. Recoverable working state, never cited as committed evidence. |
 | operation | Unique idempotency key, command kind, request hash, resulting revision/outcome. Reusing a key with different input fails. |
 | projection_job | Document ID, target revision, expected last-export hash, status/error. Retryable Markdown file publication. |
 
 Document revision chains are linear in v1. A restored revision becomes a new child of the current head; it does not rewind history. A manually reconciled AI edit records the original proposal/base and current parent for provenance without introducing branch-merging machinery.
+
+Sections, typed block versions, immutable claim/rule display references and dependency manifests follow DOCUMENT_SCHEMA. Snapshot manifests share unchanged immutable versions. Generated Markdown is a deterministic representation; pin exact serialized bytes for historical evidence when needed. One service owns both structured commits and file generation, not two independent writable stores.
 
 ## Reference materials and exact evidence
 
@@ -45,7 +47,7 @@ Document revision chains are linear in v1. A restored revision becomes a new chi
 | citation | ID, citing document revision and range or message, evidence span, use (quote/paraphrase/etc.). A citing-target exclusive check is required. |
 | source_scope_revision | ID, document ID, explicit included document/reference IDs and version-selection policy. Retrieval resolves latest policies to exact versions per run. |
 
-Import copies originals into managed storage in v1. Externally linked reference files are deferred; external editing of exported learning Markdown is supported separately. Do not deduplicate bibliographic identities simply because original files share a hash.
+Import copies originals into managed storage in v1. Externally linked reference files are deferred; external changes to exported learning Markdown are quarantined as import candidates and require validated reconciliation. Do not deduplicate bibliographic identities simply because original files share a hash.
 
 An evidence span never silently retargets to current text. Current navigation may show a reviewed mapping alongside the original citation. A missing original produces an explicit unavailable indicator, not a fabricated reconstructed quotation.
 
@@ -91,7 +93,7 @@ Inference eligibility is separate from curation and assessment: an unverified ru
 1. Evidence, assessments and scenario inputs pin immutable versions.
 2. Only document heads, drafts, workflow/job states and similar operational pointers mutate in place.
 3. Scope, meaning and assumptions are part of claim content. A wording change may be substantive; similarity cannot decide equivalence.
-4. Foreign keys restrict deletion of referenced history. Archive by default. Permanent erasure requires a future explicit policy and must report broken/deleted evidence honestly; backups may retain prior data.
+4. Foreign keys restrict deletion of referenced history. Archive by default. Unreferenced routine history can be thinned under an explicit retention policy after checking the complete dependency closure; drafts are replaceable, not permanent snapshots. Permanent erasure requires a future explicit policy and must report broken/deleted evidence honestly; backups may retain prior data.
 5. Source revisions/extractions and index generations are separate; stale search results cannot impersonate current evidence.
 6. Schema migrations have numbered versions, prerequisites, integrity checks and a recoverable backup. No destructive migration is justified by the current design draft.
 7. Secrets live outside these records; connection settings contain only a credential-store reference.

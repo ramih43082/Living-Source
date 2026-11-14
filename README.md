@@ -1,6 +1,6 @@
 # Living Source
 
-A local, AI-assisted learning workspace for any subject. Conversation drives the work; an editable learning document and an inspectable knowledge graph develop alongside it.
+A local, AI-assisted learning workspace for any subject. Conversation drives the work; a read-only learning document updated through chat and graph actions and an inspectable knowledge graph develop alongside it.
 
 **Status:** planning repository. The hosted prototype is a design reference. The local Rust application and deep RAG system have not yet been implemented here.
 
@@ -12,6 +12,8 @@ A local, AI-assisted learning workspace for any subject. Conversation drives the
 - [Local architecture](docs/ARCHITECTURE.md)
 - [Data model draft](docs/DATA_MODEL.md)
 - [Document revision lifecycle](docs/DOCUMENT_REVISIONS.md)
+- [Structured document schema](docs/DOCUMENT_SCHEMA.md)
+- [Allowed editing operations](docs/EDIT_OPERATIONS.md)
 - [RAG implementation](docs/RAG.md)
 - [Roadmap and TODO](TODO.md)
 - [Decisions and open questions](docs/DECISIONS.md)
@@ -22,7 +24,7 @@ A local, AI-assisted learning workspace for any subject. Conversation drives the
 - Rust backend and a reusable TypeScript web interface.
 - Chat fills the left half; document above graph on the right half.
 - English-only presentation; other languages are supported as source and study material.
-- Markdown with LaTeX math. The AI is the main writer; the learner can edit.
+- Markdown with LaTeX math. The AI proposes typed changes; the learner directs changes through chat and graph controls. The document pane is read-only.
 - Study by default, with an optional Critical review toggle.
 - No separate Exam practice mode and no redundant Study mode badge.
 - Manual promotion of useful results into the curated source.

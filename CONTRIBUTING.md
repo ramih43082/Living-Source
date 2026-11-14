@@ -9,7 +9,8 @@ Read:
 2. [Product plan](PLAN.md) for user-facing behavior.
 3. [Requirements and acceptance examples](docs/REQUIREMENTS.md) for scope and review criteria.
 4. [Architecture](docs/ARCHITECTURE.md) and [RAG](docs/RAG.md) for proposed implementation.
-5. [Decisions](docs/DECISIONS.md) and [TODO](TODO.md) before choosing work.
+5. [Document schema](docs/DOCUMENT_SCHEMA.md) and [editing operations](docs/EDIT_OPERATIONS.md) for the read-only document and strict mutation boundary.
+6. [Decisions](docs/DECISIONS.md) and [TODO](TODO.md) before choosing work.
 
 ## Requirements versus proposals
 
@@ -23,7 +24,7 @@ The domain examples describe required breadth. Do not hard-code the application 
 
 ## First implementation contribution
 
-Start with one local vertical slice: launch on loopback, create a Markdown learning document, edit and save it, restart and recover it, then export/restore a workspace. Preserve the agreed pane layout and English presentation. Establish and document actual setup/build/test commands as code arrives.
+Start with one local vertical slice: launch on loopback, create a structured learning document, apply a typed graph operation, render generated Markdown, restart and recover it, then export/restore a workspace. Preserve the agreed pane layout and English presentation. Establish and document actual setup/build/test commands as code arrives.
 
 Before porting the interface, obtain its source and record its origin, revision and license. Inventory existing behavior, exports and legacy schema; preserve user data through a tested migration. A screenshot or hosted link is not a code checkout.
 

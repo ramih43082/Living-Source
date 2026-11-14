@@ -1,109 +1,65 @@
-# Document revision lifecycle — design draft
+# Document revision lifecycle — updated design draft
 
-Status: proposed, 14 November 2026. Defines behavior and recovery boundaries; not yet implemented or fault-tested. Complements the [data model](DATA_MODEL.md).
+Date: 14 November 2026. Supersedes direct document editing and whole-Markdown AI replacement. The pane is read-only; [typed operations](EDIT_OPERATIONS.md) from chat/graph are the only in-app mutation path. Design only; not fault-tested implementation.
 
-## Storage decision
+## Commit lifecycle
 
-Use immutable complete Markdown snapshots in SQLite as the authoritative committed document history. Keep ordinary Markdown files under documents/ as portable working copies. The database also holds graph metadata and revision links.
+1. Read the committed structured document and its generated Markdown.
+2. Gather a graph form submission or chat-generated operation proposal pinned to the current document/item versions.
+3. Persist recoverable form/proposal state separately; streaming text is not a document revision.
+4. Validate against [the schema](DOCUMENT_SCHEMA.md), resolve handles and build a candidate.
+5. Display an impact diff when required; preserve precise learner authorization.
+6. In one SQLite transaction recheck versions, create changed object versions, advance document head, record idempotent outcome and enqueue publication/index/review jobs.
+7. Acknowledge committed state separately from Markdown publication status.
+8. Deterministically publish the portable file and refresh derived indexes asynchronously.
 
-This deliberately duplicates current Markdown content. It makes document content, anchors, citations, revision pointer and job scheduling commit together in one database transaction. File publication happens afterward and is recoverable. Do not attempt to claim one atomic transaction across SQLite and independent Markdown files.
+Full serialized document replacement is not an editing command. IDs, claim versions, citations and dependencies are assigned/validated by the service. Move/reorder preserves identity. Changed claim content creates a new version and explicit display-selection operations; old references remain unchanged.
 
-The tradeoff is additional storage and the need to expose file-export failures clearly. Initial full snapshots favor simplicity over delta compression; measure storage before changing that design. A plain Markdown export remains readable independently, but full workspace backup is needed for conversations, provenance and assessments.
+## Concurrency and restore
 
-## Lifecycle
+If a graph action or another chat run commits after an AI run starts, hold that AI proposal for reconciliation. Check versions again after review. No silent force-save or automatic rebase.
 
-1. Open: load current revision plus any recoverable draft. Show which is committed and which is unsaved.
-2. Edit: user changes update a recoverable draft tied to a base revision. Debounce draft persistence; expose saving/failure state. Do not create a permanent revision for every keystroke.
-3. Commit: on explicit save or a debounced autosave, submit full candidate Markdown, base revision ID and a unique operation key.
-4. Validate: syntax/rendering limits, payload size, anchor/citation structure and base ownership. Markdown need not contain assessed claims to be saved.
-5. In one SQLite transaction: compare expected head, insert immutable snapshot/occurrences/citations, advance head, record operation result and enqueue publication/index-impact work. Roll back all on failure.
-6. Acknowledge committed: return the new revision ID. Show a separate “Markdown file pending” state if publication has not completed.
-7. Publish: export the committed snapshot to its stable ID-based filename; display titles need not be valid Windows filenames.
-8. Index asynchronously: stale/missing index state never prevents document editing. Retrieval identifies the exact indexed revision.
+Restoring an older document creates a new head from that historical structure, records its origin and preserves old history. It does not roll back global assessments or change saved scenarios. Preview the resulting version references; archived dependencies must still resolve.
 
-Check the head inside the transaction, not only before it. Repeated requests with the same operation key return the original outcome. No-op content/title saves can return the existing revision without creating history.
+## Storage and bounded history
 
-Draft recovery is best-effort up to the last acknowledged draft save; unsent keystrokes cannot be guaranteed after a browser crash. Define debounce values and limits during implementation, with visible failure behavior.
+Use one SQLite database for authoritative typed records, chat, immutable object versions and checkpoint metadata. Markdown is a generated portable representation. A database transaction does not atomically publish a separate file, so publication jobs are durable/retryable.
 
-## AI edits and user edits
+Separate recovery persistence, current state and long-term history:
+- Chat input/graph forms/proposals use replaceable recovery drafts, debounced with a maximum persistence interval during continuous input. No per-token/per-keystroke permanent snapshots.
+- Accepted operation batches create versioned commits; an unchanged operation is a no-op.
+- Meaningful retained checkpoints include applied AI batches, explicit checkpoints and restores.
+- Unreferenced routine document history may be thinned under a visible retention policy; exact counts/ages are still open.
+- Revisions pinned by citations, assessments, curated knowledge, retained proposals/traces or scenarios cannot be removed while referenced. Pruning operates on the full dependency closure, not just direct references.
+- Content-addressed immutable block/knowledge versions let unchanged content be shared across checkpoints. Full generated Markdown can be cached for current/pinned revisions rather than copied on every draft update.
+- Historical evidence locators include immutable content and serializer version; materialize/pin exact bytes before dropping any representation required by a citation.
+- Provide storage accounting and a preview for cleanup. Do not promise physical file shrinkage from logical deletion alone; space reclamation is a separate tested maintenance step.
 
-An AI run pins the starting document revision and relevant evidence. Streamed text is a draft/proposal, not an incremental overwrite of committed Markdown. Cancellation or provider errors leave the existing document intact.
+Implement current state/recovery correctly first. Storage representation, retention defaults and compaction require measured fixtures; do not introduce complex delta chains merely to reduce estimated size.
 
-| Situation | Behavior |
+## File publication and external changes
+
+The backend publishes documents/<document-id>.md using a deterministic serializer/version, a sibling temporary file and platform-tested replacement/flush behavior. Titles do not define file paths.
+
+Track expected file hashes. Unexpected external edits are captured as import candidates and block automatic replacement. Parse and validate them, translate accepted differences into typed proposals, then review through chat/graph. Imported claims of verification never create trusted assessments.
+
+Missing/moved files do not delete live documents. Duplicate IDs, malformed structure or unsupported formats are explicit errors. Preserve observed original bytes for recovery. External editors do not follow application locks, so hash checks cannot guarantee capture of every simultaneous external write; do not promise that guarantee.
+
+## Failure recovery and backup
+
+| Failure | Outcome |
 | --- | --- |
-| AI completes; head still equals base | Validate and apply if automatic document updates are enabled; otherwise show a proposed diff. |
-| Learner or another tab saved since AI started | Hold proposal for review, even if changes appear disjoint. Show base/current/proposed comparison. |
-| Learner accepts selected changes | Build a reconciled candidate against the current head; commit with a fresh head check. |
-| Head changes again during review | Refresh the comparison; never force-overwrite. |
-| Invalid or partial AI output | Retain the proposal/error for inspection; do not update the head. |
-| User rejects proposal | Record rejection; leave document and assessments unchanged. |
+| Partial/failed AI response | Keep committed state; preserve useful proposal/error information. |
+| Transaction failure or disk full | No success acknowledgement or partial batch. |
+| Commit succeeds before file publication | Recover from database and retry durable job. |
+| File published before job acknowledgement | Compare expected hash and acknowledge without another revision. |
+| Index interrupted | Rebuild against exact versions; expose stale coverage. |
+| External file changed | Preserve candidate; require reconciliation, never silently trust file metadata. |
 
-Proposal states: generating, ready, needs_review, applied, rejected, cancelled or failed. A ready proposal becomes needs_review when its base is stale. Applying it and recording the applied revision happen in the same transaction.
+Serialize workspace writes in one service, while multiple tabs still use version checks. Backups capture a consistent supported SQLite snapshot, referenced immutable assets and a manifest of schema/serializer versions and hashes. Include any retained external candidates; exclude credentials. Derived indexes and generated current Markdown can be rebuilt.
 
-An AI-generated block may enter the working document without entering the curated source. Add to source is a separate user action against a pinned statement/version; verification is another explicit action.
+Archive by default. Permanent erasure is separate from unreferenced history cleanup; neither should cascade through cited evidence silently.
 
-## Anchors, citations and meaning
+## Required future checks
 
-A block ID denotes continuity of a paragraph, heading, equation or other structural unit; it does not assert that its meaning is unchanged.
-
-- Structured edits preserve block IDs where the operation establishes continuity; inserted blocks get new IDs.
-- Raw Markdown edits use a deterministic structural diff. Preserve IDs for unambiguous unchanged/moved blocks; ambiguous matches require new IDs and retain mapping candidates.
-- Splits/merges create new IDs with explicit lineage. Never choose arbitrarily between identical repeated paragraphs.
-- Store offsets as UTF-8 byte ranges into the immutable snapshot, with parser/version metadata. Browser adapters convert their string indices; do not mix UTF-16 offsets with byte offsets.
-- Every saved citation resolves to the original version/span. Mapping to new text is an additional navigation aid, not a replacement.
-- Claims extracted from edited text are proposals. Keep existing claims/assessments on their old versions and open impact-review tasks where needed.
-- Unchanged claims explicitly referenced from a revised document can retain their own existing versions. That does not verify the entire new document.
-
-Example: revision 12 states a theorem for positive integers and is linked to a reviewed claim. Revision 13 changes the domain to all integers. The old assessment still describes the old claim; the broadened statement needs a new claim version and review. A scenario using the old claim remains reproducible.
-
-## External Markdown edits
-
-In v1 the stable documents/<document-id>.md path identifies the working copy; renaming a file is not automatic document deletion or identity reassignment.
-
-Track the last exported revision/hash. When a file changes:
-1. Capture its bytes to a durable recovery candidate before overwriting anything.
-2. If database head still equals the last exported revision, offer/import it as an external edit based on that revision, with the usual head check.
-3. If both database and file changed, preserve both and require reconciliation.
-4. For ambiguous anchor matches, create new identities and show unresolved mappings.
-5. Missing files are reported; moving/deleting a working copy does not delete committed history.
-
-V1 uses conservative review for external imports. A malformed/unsupported file is retained as a candidate and reported, not discarded.
-
-Publication uses a sibling temporary file and platform-tested replace/flush behavior. Before publishing, check the working file against the last-export hash; unexpected bytes are preserved and publication is blocked pending reconciliation. External editors do not obey application locks: hash checks alone cannot eliminate a last-moment race. Do not claim lossless simultaneous arbitrary external writes. Detect as much as possible, retain observed candidates and advise closing external editors during reconciliation. Stronger filesystem coordination remains a platform implementation question.
-
-## Recovery and backup
-
-| Failure point | Required outcome |
-| --- | --- |
-| Before database commit | Old head remains; recover last persisted draft/proposal if available. |
-| Database commit fails or disk is full | No success acknowledgement; preserve recoverable input and show failure. |
-| Database committed; Markdown not published | Committed revision remains authoritative; retry durable publication job on restart. |
-| File replaced; job acknowledgement interrupted | Compare target hash, acknowledge if already correct; retry without creating a new revision. |
-| Index build interrupted | Resume/rebuild against pinned version; label stale coverage. |
-| Unexpected external file detected | Preserve candidate and block replacement; no silent overwrite. |
-
-The service serializes workspace mutations and rejects a second writer service. Multiple browser tabs still use expected-revision checks. Short-lived backup/maintenance locks are separate from normal editing.
-
-Backups capture a consistent SQLite snapshot and every immutable original asset it references. Block destructive asset cleanup while taking the backup; use a supported SQLite backup procedure rather than copying an open database file. Include a manifest of hashes and schema version. Current Markdown copies can be regenerated from committed snapshots. Capture any external edits through reconciliation first or include them explicitly as uncommitted recovery candidates.
-
-Restore verifies assets and integrity before activating the workspace; missing evidence is reported. Credentials are excluded. Test actual restore on Linux and Windows before claiming portability.
-
-## Undo, restore and deletion
-
-Undo in an unsaved editor affects the draft. Restoring a committed historical revision creates a new revision whose parent is the current head and whose provenance records the restored revision. Current citations/assessments are never silently rewritten.
-
-Archiving hides a document from ordinary navigation while preserving citations and history. Permanent deletion, retention pruning and history compression are deferred designs; do not implement cascading erasure as a convenient default.
-
-## Required acceptance checks
-
-- Save, restart and recover exact Markdown including multilingual text and equations.
-- Two tabs start at revision A; one commits B; the other's A-based save is held for reconciliation.
-- AI starts at A, user commits B, AI finishes: B remains until an explicit reconciliation commit.
-- Retry the same save after lost response: exactly one committed revision.
-- Interrupt publication after a database commit: recover the committed document and retry export.
-- Inject disk-full/write failures: no false success or lost previously committed revision.
-- Restore an older revision: history and old citations survive.
-- Move/split/duplicate paragraphs: no silently misassigned anchors.
-- Change a theorem's assumptions: no inherited verification.
-- Reconcile an externally edited file against both unchanged and changed database heads.
-- Back up and restore across OSs with all evidence/assessment links intact and no credentials.
+Test stale graph/chat operations, idempotent retries, partial streaming, disk-full and interrupted publication, exact citation replay, restoration without assessment rollback, Unicode/math preservation, referenced-history protection, export round trips and Linux-to-Windows restoration. These remain unchecked implementation work.

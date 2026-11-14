@@ -7,10 +7,10 @@ Audited against the available planning conversation on 14 November 2026. This ch
 | ID | Requirement | Acceptance example | Main reference |
 | --- | --- | --- | --- |
 | R01 | General-purpose, independent learning documents | Create philosophy, math and language documents without mandatory subject templates; each retains its discussion and can reference shared knowledge. | PLAN |
-| R02 | Chat drives document construction; learner can edit | AI revises a working document; a concurrent learner edit is preserved and stale AI changes require reconciliation. | PLAN |
+| R02 | Read-only document; changes through chat/graph | Model proposes typed operations; backend validates and serializes. Stale operations cannot overwrite newer graph/chat changes; no in-pane or raw-source editing. | PLAN, EDIT_OPERATIONS |
 | R03 | Chat occupies left half; document above graph on right | Resize/maximize panes; passage and graph selections reveal relevant context. | PLAN |
 | R04 | English presentation; multilingual material | A source quotation or language exercise retains its original language, including right-to-left text, with English framing. | PLAN, RAG |
-| R05 | Portable Markdown with LaTeX math | Edit/render/export equations; structured identities and assessments survive document revisions without being embedded as fragile prose labels. | PLAN, ARCHITECTURE |
+| R05 | Portable Markdown with LaTeX math | Render/export equations and document-linked graph metadata; IDs and exact references survive validated changes. Full assessment history accompanies workspace export. | PLAN, ARCHITECTURE |
 | R06 | Study by default; optional Critical review | New document opens without trust/assumption tasks. Toggling review off hides tools without deleting assessments. No Exam practice mode or redundant Study badge. | PLAN |
 | R07 | Remembered light/dark appearance | Theme preference survives restart. | PLAN |
 | R08 | Manual source promotion and explicit verification | Promote a theorem from discussion; inclusion alone leaves it unverified. A separate review records verifier, method, scope, evidence and version. | PLAN |
@@ -22,12 +22,14 @@ Audited against the available planning conversation on 14 November 2026. This ch
 | R14 | Deep hybrid retrieval across subjects/languages | Combine lexical, semantic and graph retrieval with bounded follow-up searches; expand a proof fragment to assumptions and an interpretation to surrounding text. | RAG |
 | R15 | Inspectable evidence and lineage | Citation resolves to an exact source version and passage. Several summaries of one source do not count as independent corroboration; absent evidence is disclosed. | RAG |
 | R16 | Source scope and original preservation | Search only enabled sources; retain originals, extraction quality and separate published/AI translations. Documents remain usable before graph extraction. | RAG |
-| R17 | Local website on Linux and Windows 11 | Rust service serves reusable TypeScript UI locally; workspace restoration preserves IDs and links across OSs. Offline document editing works. | ARCHITECTURE |
+| R17 | Local website on Linux and Windows 11 | Rust service serves reusable TypeScript UI locally; workspace restoration preserves IDs and links across OSs. Offline reading and explicit graph-form editing work without AI. | ARCHITECTURE |
 | R18 | Local persistence and portable backups | Markdown, references and SQLite survive restart and interrupted writes. Consistent backups exclude credentials; indexes can be rebuilt. | ARCHITECTURE |
 | R19 | Replaceable AI API, initially DeepSeek | Backend sends selected context; model availability/identity are checked and recorded. API failure does not lose edits. No silent model substitution. | PLAN, ARCHITECTURE |
 | R20 | Secure credential design and honest audit status | OS credential-store integration supports replace/delete and explicit session-only fallback; key never appears in exports/logs. Security audit remains a separate pending task. | ARCHITECTURE, TODO |
 
 Reference names above correspond to [PLAN](../PLAN.md), [ARCHITECTURE](ARCHITECTURE.md), [RAG](RAG.md) and [TODO](../TODO.md).
+
+The current [schema](DOCUMENT_SCHEMA.md) and [operation contract](EDIT_OPERATIONS.md) refine R02/R05. Round-trip serialization, closed payload validation, backend-owned IDs and exact-version authorization are required. Logseq adoption is not decided.
 
 ## Reasoning regression examples
 

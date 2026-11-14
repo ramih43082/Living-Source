@@ -6,7 +6,7 @@ The local architecture in this plan supersedes the earlier hosted, browser-stora
 
 Living Source is a general-purpose learning and knowledge-building workspace. Mathematics, physics, philosophy, biblical studies, literature, and language learning illustrate the range; they are not exclusive categories or mandatory document templates.
 
-A learning document grows primarily through discussion between the learner and AI. The AI writes and revises it; the learner can edit directly. Conversation, working documents, reference materials, and curated claims remain distinct but connected.
+A learning document grows primarily through discussion between the learner and AI. The AI proposes structured changes; the learner directs revisions through chat or graph controls. The document pane is read-only. Conversation, working documents, reference materials, and curated claims remain distinct but connected.
 
 ## Workspace
 
@@ -27,17 +27,20 @@ Create independent documents for any topic or goal, starting blank, from notes o
 
 Support explanations, equations, definitions, proofs, arguments, interpretations, examples, exercises, vocabulary, open questions, and references. Documents share a knowledge base and may link to existing claims without duplicating them as independent evidence.
 
-Use Markdown plus LaTeX math, with rendered and source views. Full LaTeX export is a possible later feature.
+Use backend-generated Markdown plus LaTeX math, with a rendered view and optional read-only source view. Document-linked graph structure must travel in the portable format; its exact syntax remains to be specified. Full LaTeX export is a possible later feature.
 
 Required editing behavior:
-- AI can update the working draft when enabled.
-- Learner edits are preserved.
-- AI changes prepared from an older version are held for review rather than overwriting intervening edits.
+- All changes use validated typed operations from chat or graph actions; no in-pane editing or arbitrary Markdown replacement.
+- AI proposals can apply when authorized and fresh; the backend generates files and assigns identities.
+- Changes prepared from an older version are held for review rather than overwriting intervening actions.
+- Claim-content changes create a new version; curation and verification are separate explicit learner actions.
 - Revision history, undo and comparison.
 - Stable block/passage identities and recoverable stale anchors.
 - Portable import/export and backup restoration.
 
 Writing a document is not the same as promoting a result into the curated source. Working text can develop naturally; the learner explicitly controls source inclusion and verification.
+
+See [document schema](docs/DOCUMENT_SCHEMA.md), [operation contract](docs/EDIT_OPERATIONS.md) and [revision lifecycle](docs/DOCUMENT_REVISIONS.md). Syntax validity never establishes truth. Logseq-style identities are a design influence, not a committed application dependency.
 
 ## Study and Critical review
 
@@ -136,7 +139,7 @@ Local storage does not mean inference is offline: the API credential and selecte
 
 ## Current implementation boundary
 
-The hosted prototype demonstrates panes, document creation/editing, DeepSeek connection, revision protection, manual curation, basic scenarios, Study/Critical review, exports and themes.
+The earlier hosted prototype demonstrates panes, direct document creation/editing (now superseded by the read-only target), DeepSeek connection, revision protection, manual curation, basic scenarios, Study/Critical review, exports and themes.
 
 The local Rust runtime, portable persistent workspace, OS credential storage, deep RAG, richer cross-document graph and Linux/Windows packaging remain to be built. The prototype is not security-audited, and live-provider and browser validation remain incomplete.
 

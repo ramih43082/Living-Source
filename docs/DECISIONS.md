@@ -7,7 +7,9 @@
 | Local browser application | Same interface on Linux and Windows 11 |
 | Rust backend, TypeScript UI | Local services in Rust; reuse visual interface |
 | English presentation | Other languages are source/study content |
-| AI main writer; learner editor | Discussion develops an editable document |
+| Read-only document pane | Changes originate through chat or graph actions |
+| Typed AI proposals; backend serialization | Strict structure is enforced by the program |
+| Portable document-linked graph | Stable identities and references travel with Markdown; exact syntax is pending |
 | Markdown + LaTeX math | Readable, portable authored content |
 | Structured records alongside text | Stable identities for trust and dependencies |
 | Chat-left; document/graph stacked right | Chat is the main interaction |
@@ -24,6 +26,8 @@
 
 - Hosted runtime as the target: now only a design reference.
 - Browser localStorage as durable storage: replaced by planned local workspace persistence.
+- Direct document editing, including an editable raw Markdown source view.
+- Arbitrary full-document Markdown output as the AI mutation protocol.
 - PDF reader as the primary interface.
 - Equal-width three-column layout.
 - Dedicated Exam practice mode: it was an example of studying, not a separate requirement.
@@ -40,7 +44,9 @@
 4. Validate the proposed revision/anchor reconciliation design on real Markdown and both OSs.
 5. Validate managed import copies for v1; externally linked references are deferred in the data-model proposal.
 6. The initial restricted inference language.
-7. Workspace retention and backup defaults.
+7. Workspace retention/compaction and backup defaults.
+8. Exact portable Markdown grammar and Logseq interoperability (no adoption commitment).
+9. Machine-readable operation schemas and matching Rust validation types.
 
 These decisions can be resolved when they affect concrete implementation. No cloud synchronization requirement or full code rewrite of the interface is implied.
 
@@ -53,7 +59,7 @@ The [requirements checklist](REQUIREMENTS.md) maps the available discussion to a
 These are implementation proposals, not user-ratified changes or completed code:
 
 - Separate persistent entity IDs from immutable version IDs; citations and assessments pin versions.
-- Keep complete committed Markdown snapshots in SQLite, exporting portable working copies through durable jobs.
+- Updated: retain structured document checkpoints sharing immutable content versions; generate portable Markdown through durable jobs.
 - Use expected-head checks and idempotent saves; hold stale AI edits for review.
 - Preserve block lineage without treating structural continuity as semantic equivalence.
 - Copy reference originals into managed storage initially; keep external Markdown reconciliation conservative.
