@@ -76,7 +76,7 @@ Literature/languages: retain exact passages and usage context; avoid turning a p
 
 Citations open original passages, surrounding context, source/version and locators. Optional English translations remain linked to the original.
 
-Show extraction limitations, retrieval relevance and derivative relationships. Critical review additionally surfaces assessments and known challenges.
+Track coverage separately: imported, extracted, indexed, searched, and assessed are different states. An absence of retrieved contradictions is not proof that none exist. Show extraction limitations, retrieval relevance and derivative relationships. Critical review additionally surfaces assessments and known challenges.
 
 If evidence is missing, say so. General model knowledge may be clearly identified, but must not acquire invented page references or source quotations.
 

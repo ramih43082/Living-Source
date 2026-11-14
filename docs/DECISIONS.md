@@ -43,3 +43,7 @@
 7. Workspace retention and backup defaults.
 
 These decisions can be resolved when they affect concrete implementation. No cloud synchronization requirement or full code rewrite of the interface is implied.
+
+## Completeness and contributor handoff
+
+The [requirements checklist](REQUIREMENTS.md) maps the available discussion to acceptance examples. Optional ideas are listed separately from accepted behavior. [CONTRIBUTING](../CONTRIBUTING.md) explains the planning-only state, implementation starting point and evidence required to mark work complete.

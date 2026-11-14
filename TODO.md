@@ -50,7 +50,8 @@ Open work for the target local application. Prototype features are not evidence 
 - [ ] Separate provenance, curation, assessment and hypothetical acceptance.
 - [ ] Reviewable AI relationships and explicit multi-premise inference.
 - [ ] Corrections, counterexamples and proof-gap distinctions.
-- [ ] Versioned scenarios with traces and conflict containment.
+- [ ] Versioned scenarios with traces, pinned inputs, explicit refresh and conflict containment.
+- [ ] Conditional-result preservation, cycle handling and explicit rules for negation/contraposition.
 - [ ] Scenario comparison, disagreement tracing and dependency impact review.
 - [ ] Hide assessments during Study without changing stored values.
 
@@ -68,7 +69,8 @@ Open work for the target local application. Prototype features are not evidence 
 - [ ] Optional MCP/API access for Codex or Claude Code.
 - [ ] OCR and advanced equation/PDF extraction.
 - [ ] Formal proof-assistant integration.
-- [ ] Richer learning progress and review scheduling.
+- [ ] Richer learning progress, open questions, checkpoints and review scheduling.
+- [ ] Definition/terminology views and a focused claim/counterexample workspace.
 - [ ] Publication-oriented LaTeX/PDF export.
 
 Cloud synchronization is not required. Portable local backups are required.

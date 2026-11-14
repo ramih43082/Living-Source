@@ -105,6 +105,10 @@ For “accept this book,” create a reviewable, versioned claim set and interpr
 
 Each result exposes its premises, rule, conditions, source versions and reasoning. Support scenario comparison and tracing opposing conclusions to differing premises or interpretations.
 
+Scenarios pin claim and rule versions. Updating the source does not silently rewrite an existing scenario; offer an explicit refresh with an impact review. A saved conditional result retains its premises, rules and interpretive scope even when manually promoted.
+
+Cycles do not establish their own premises. Do not infer converses or contrapositives unless explicitly licensed by the selected reasoning rules. A book-level summary must show mixed outcomes and coverage rather than a single green/red truth value.
+
 Track positive and negative derivations independently. Contain contradictions rather than allowing unrestricted classical explosion into unrelated claims. Bound evaluation and distinguish incomplete runs from genuinely unresolved results.
 
 ## Corrections and challenges
@@ -124,7 +128,7 @@ A conditional relationship can be verified without accepting the truth of its pr
 
 DeepSeek is the initial provider. The prototype uses `deepseek-flash`, documented during setup as the rolling alias for V4.1 Flash 1017. Recheck availability when connecting and record returned model metadata; do not claim the alias permanently pins a snapshot.
 
-Provider integration should be replaceable. The application owns documents, conversations, graph, assessments and history.
+Provider integration should be replaceable. Do not silently substitute models; report the active model and any user-approved fallback. The application owns documents, conversations, graph, assessments and history.
 
 Require English presentation, traceable context, actionable errors, usage reporting, cancellation, validated proposals, conflict-safe revisions, and no fabricated citations. Distinguish quotation, paraphrase, synthesis and hypothetical inference.
 

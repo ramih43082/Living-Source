@@ -6,6 +6,8 @@ A local, AI-assisted learning workspace for any subject. Conversation drives the
 
 ## Planning documents
 
+- [Contributor guide](CONTRIBUTING.md)
+- [Requirements and acceptance examples](docs/REQUIREMENTS.md)
 - [Product plan](PLAN.md)
 - [Local architecture](docs/ARCHITECTURE.md)
 - [RAG implementation](docs/RAG.md)
