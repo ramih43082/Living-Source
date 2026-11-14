@@ -8,8 +8,12 @@ Open work for the target local application. Prototype features are not evidence 
 - [ ] Serve the TypeScript interface on loopback only.
 - [ ] Preserve three-pane layout, resize controls and dark mode.
 - [ ] Preserve default Study and optional Critical review; no Exam practice mode or Study badge.
+- [x] Draft logical data model and document revision lifecycle (design only).
+- [ ] Review the data/revision proposals and translate them into SQL constraints and migrations.
 - [ ] Define workspace schema, migrations and relative-path rules.
 - [ ] Implement crash-safe Markdown + SQLite persistence and revision history.
+- [ ] Implement idempotent expected-head saves, durable publication jobs and external-edit reconciliation.
+- [ ] Validate anchor mapping and immutable citation targets against the revision acceptance cases.
 - [ ] Import prototype workspace JSON without losing content.
 - [ ] Implement consistent backup/restore and test Linux-to-Windows migration.
 

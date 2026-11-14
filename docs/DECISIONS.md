@@ -37,8 +37,8 @@
 1. Linux distribution and available CPU/RAM/GPU for local model selection.
 2. Languages and formats for the first retrieval evaluation.
 3. Rust server, extraction, embedding and vector-search libraries meeting portability/license requirements.
-4. Reconciliation of external Markdown edits with stable passage IDs.
-5. Copying imports into the workspace versus optional externally linked files.
+4. Validate the proposed revision/anchor reconciliation design on real Markdown and both OSs.
+5. Validate managed import copies for v1; externally linked references are deferred in the data-model proposal.
 6. The initial restricted inference language.
 7. Workspace retention and backup defaults.
 
@@ -47,3 +47,17 @@ These decisions can be resolved when they affect concrete implementation. No clo
 ## Completeness and contributor handoff
 
 The [requirements checklist](REQUIREMENTS.md) maps the available discussion to acceptance examples. Optional ideas are listed separately from accepted behavior. [CONTRIBUTING](../CONTRIBUTING.md) explains the planning-only state, implementation starting point and evidence required to mark work complete.
+
+## Proposed data and revision decisions — 14 November 2026
+
+These are implementation proposals, not user-ratified changes or completed code:
+
+- Separate persistent entity IDs from immutable version IDs; citations and assessments pin versions.
+- Keep complete committed Markdown snapshots in SQLite, exporting portable working copies through durable jobs.
+- Use expected-head checks and idempotent saves; hold stale AI edits for review.
+- Preserve block lineage without treating structural continuity as semantic equivalence.
+- Copy reference originals into managed storage initially; keep external Markdown reconciliation conservative.
+- Keep curation, assessment, hypothetical admission and source lineage separate.
+- Archive rather than cascade-delete cited history; defer permanent erasure and retention policy.
+
+See [data model](DATA_MODEL.md) and [revision lifecycle](DOCUMENT_REVISIONS.md). Exact SQL, migrations, filesystem durability, resource limits and the inference language remain to be specified and tested.

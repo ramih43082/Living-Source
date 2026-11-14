@@ -10,6 +10,8 @@ A local, AI-assisted learning workspace for any subject. Conversation drives the
 - [Requirements and acceptance examples](docs/REQUIREMENTS.md)
 - [Product plan](PLAN.md)
 - [Local architecture](docs/ARCHITECTURE.md)
+- [Data model draft](docs/DATA_MODEL.md)
+- [Document revision lifecycle](docs/DOCUMENT_REVISIONS.md)
 - [RAG implementation](docs/RAG.md)
 - [Roadmap and TODO](TODO.md)
 - [Decisions and open questions](docs/DECISIONS.md)

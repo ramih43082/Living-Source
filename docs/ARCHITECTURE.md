@@ -6,6 +6,8 @@ Single-user local website accessed through a browser on Linux or Windows 11. A R
 
 Cloud storage and synchronization are not required. DeepSeek is the initial external inference service. Embedding-model installation may require a download; indexing should operate locally thereafter.
 
+The [data model](DATA_MODEL.md) and [revision lifecycle](DOCUMENT_REVISIONS.md) refine this architecture as proposed designs. They are not implemented migrations.
+
 ## Components
 
 | Component | Responsibility |
@@ -23,16 +25,16 @@ Select exact frameworks and dependencies after portability, license and runtime 
 ## Proposed workspace layout
 
 - `workspace.json`: workspace identity and schema version; no secrets.
-- `documents/`: authored Markdown.
+- `documents/`: portable Markdown working copies of committed documents.
 - `references/`: imported originals.
-- `database.sqlite`: conversations, stable IDs, claims, relations, assessments, jobs and revision metadata.
-- `revisions/`: snapshots if not kept in SQLite.
+- `database.sqlite`: authoritative committed Markdown snapshots, conversations, stable IDs, claims, relations, assessments and jobs.
+- Revision snapshots are initially kept in SQLite; a separate revisions directory is not required.
 - `indexes/`: rebuildable search data.
 - `exports/`: user-requested exports.
 
 Use relative paths and stable IDs. Document/reference revisions are user data; search indexes are derived.
 
-Choose an explicit consistency strategy for Markdown and SQLite. Atomic file replacement, expected revisions, transactional metadata and recovery journaling must be designed together. A database transaction alone does not atomically update a separate Markdown file.
+Proposed consistency strategy: commit Markdown snapshots, metadata, head pointers and publication jobs in one SQLite transaction. Publish ordinary Markdown copies afterward through retryable jobs. Distinguish committed content from pending file publication. A database transaction alone does not atomically update a separate Markdown file. External changes are preserved as candidates and reconciled; see the revision lifecycle for limits of concurrent external-editor writes.
 
 Detect external Markdown edits and reconcile them without losing anchors or overwriting pending AI work.
 
