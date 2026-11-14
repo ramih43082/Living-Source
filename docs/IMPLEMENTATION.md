@@ -4,26 +4,28 @@ This is a runnable Rust library and command-line example, not the local browser 
 
 ## Run
 
-Install Rust using rustup. The repository pins Rust 1.100.0 and includes Cargo.lock for reproducible dependency resolution. Run from the repository root:
+Install Rust using rustup. The repository pins Rust 1.100.0 and includes Cargo.lock for reproducible dependency resolution. SQLite is bundled and compiled from source; a C toolchain is required (Linux compiler tools or Windows MSVC build tools). Run from the repository root:
 
 ```sh
 cargo test --workspace --locked
 cargo run --locked -p living-source-core --example demo
+cargo run --locked -p living-source-core --example persistent_demo -- workspace.sqlite
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 ```
 
-The demo consumes fixtures/create-claim.json, creates a section and claim and prints the committed structured document with backend-generated UUIDs. State is in memory and disappears at process exit. This is intentional: durable SQLite transactions are the next implementation boundary.
+The demo consumes fixtures/create-claim.json, creates a section and claim and prints the committed structured document with backend-generated UUIDs. The original demo remains in-memory. persistent_demo creates a database and example document on first use, then reloads it on later runs. See [storage implementation](STORAGE.md) for durability boundaries.
 
 ## Implemented boundary
 
 - Strict Serde records and tagged operations reject unknown fields and operation names.
 - Six operations: rename_document, add_section, create_claim, place_claim, revise_claim, select_claim_version.
-- Atomic candidate application, expected document/claim versions, no-op title handling and process-local idempotency receipts.
+- Atomic candidate application, expected document/claim versions, no-op title handling and idempotency receipts (durable when using Store).
 - Backend UUID generation, backward-only batch handles and kind-checked references.
 - Immutable prior claim content with explicit display selection and review-required markers.
 - Bounded proposal/field sizes, operation counts and document item counts.
 - Generated JSON Schemas and a runnable example fixture.
+- SQLite document/revision persistence, immutable claim bodies, durable proposal/retry records and initial schema migration.
 
 The Rust engine is the authority for semantic checks. JSON Schema alone does not validate ownership, referenced versions, byte limits, resource budgets or logical truth. UTF-8 limits count bytes, not JSON Schema character lengths. Schema generation must not be presented as provider authorization or verification.
 
@@ -56,12 +58,12 @@ Proposal parsing and candidate validation do not render HTML. Prose resembling m
 
 ## Next slice
 
-1. Durable SQLite transactions, schema migration, bounded receipts and restart/recovery tests.
+1. History/receipt retention, safe workspace backup/restore and publication jobs.
 2. Expand the operation profile and add compatible TypeScript types before building graph forms.
 3. Choose and implement the portable Markdown grammar, deterministic serializer and round-trip tests.
 4. Add the loopback service and read-only document/graph interface.
 5. Connect DeepSeek through the same validation/authorization path; add credential handling separately.
 
-In-memory state currently retains claim versions and replay receipts for the process lifetime. It is not the proposed bounded on-disk history implementation. Do not use this library as a long-running storage service until persistence and retention are implemented.
+Store now persists history and replay receipts. Claim text is not copied into each document checkpoint, but manifests and accepted proposal records still grow. Automatic pruning, backup/restore, encryption and publication are not implemented; do not claim bounded long-term storage yet.
 
 CI is configured for Linux and Windows. A configuration is not proof of a passing remote run; inspect Actions results separately. Rust compilation/tests on the development Linux environment do not establish Windows packaging compatibility.

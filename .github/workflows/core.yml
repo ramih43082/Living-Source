@@ -16,6 +16,10 @@ jobs:
       - run: cargo test --workspace --locked
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - run: cargo run --locked -p living-source-core --example demo
+      - name: Persistent demo first run
+        run: cargo run --locked -p living-source-core --example persistent_demo -- "${{ runner.temp }}/living-source-smoke.sqlite"
+      - name: Persistent demo reopen
+        run: cargo run --locked -p living-source-core --example persistent_demo -- "${{ runner.temp }}/living-source-smoke.sqlite"
       - run: cargo run --locked -p living-source-core --example schemas
       - name: Check generated schemas are current
         run: git diff --exit-code -- schemas

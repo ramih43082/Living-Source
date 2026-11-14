@@ -1,8 +1,10 @@
-//! Experimental document engine. No provider, filesystem, or UI authority lives here.
+//! Document engine and SQLite persistence. Authorization belongs to the service layer.
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, BTreeSet};
 use uuid::Uuid;
+
+pub mod storage;
 
 pub const MAX_PROPOSAL_BYTES: usize = 1024 * 1024;
 const MAX_FIELD_BYTES: usize = 64 * 1024;
@@ -170,14 +172,15 @@ pub struct Snapshot {
     pub review_required: Vec<ClaimRef>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct Outcome {
     pub revision_id: Uuid,
     pub created_ids: BTreeMap<String, Uuid>,
     pub created_claim_refs: BTreeMap<String, ClaimRef>,
 }
 
-/// In-memory boundary only. SQLite transactions and durable replay are next.
+/// In-memory engine; use storage::Store for durable transactions and replay.
 pub struct Engine {
     state: Snapshot,
     receipts: BTreeMap<Uuid, (Vec<u8>, Outcome)>,

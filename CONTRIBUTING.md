@@ -2,7 +2,7 @@
 
 ## Start here
 
-The repository now contains an in-memory Rust document engine and runnable CLI example. Start with [implementation setup](docs/IMPLEMENTATION.md) for tested commands and supported operations. SQLite persistence, browser UI and deep RAG are still outstanding. The hosted prototype is a separate design reference; its code and personal browser data have not been migrated here. Do not treat prototype behavior as verified local functionality.
+The repository now contains a Rust document engine with SQLite persistence and runnable CLI examples. Start with [implementation setup](docs/IMPLEMENTATION.md) for tested commands and supported operations. Browser UI, complete workspace backup/retention and deep RAG are still outstanding. The hosted prototype is a separate design reference; its code and personal browser data have not been migrated here. Do not treat prototype behavior as verified local functionality.
 
 Read:
 1. [README](README.md) for purpose and current status.

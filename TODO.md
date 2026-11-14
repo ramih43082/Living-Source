@@ -7,7 +7,9 @@ Open work for the target local application. Prototype features are not evidence 
 - [x] Rust workspace, pinned toolchain and Cargo.lock.
 - [x] Six-operation in-memory document/claim engine with atomic batches and stale-version checks.
 - [x] Generated schemas, example fixture and CLI demo.
-- [x] Eleven core tests passing on development Linux; formatting and Clippy checks pass.
+- [x] Nineteen core/storage tests passing on development Linux; formatting and Clippy checks pass.
+- [x] SQLite initial migration, atomic commits, historical loads and durable operation receipts.
+- [x] Restart, concurrent stale-write, interrupted transaction, late write failure and SQLite-full tests.
 - [x] Configure Linux/Windows CI (remote results must be checked separately).
 
 ## Local foundation
@@ -24,7 +26,7 @@ Open work for the target local application. Prototype features are not evidence 
 - [ ] Define bounded history retention, dependency protection and storage accounting.
 - [ ] Review the data/revision proposals and translate them into SQL constraints and migrations.
 - [ ] Define workspace schema, migrations and relative-path rules.
-- [ ] Implement crash-safe Markdown + SQLite persistence and revision history.
+- [ ] Complete Markdown publication and workspace revision lifecycle (SQLite document/claim persistence implemented).
 - [ ] Implement idempotent expected-head saves, durable publication jobs and external-edit reconciliation.
 - [ ] Validate anchor mapping and immutable citation targets against the revision acceptance cases.
 - [ ] Import prototype workspace JSON without losing content.
